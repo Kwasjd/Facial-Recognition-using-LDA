@@ -13,7 +13,8 @@ if not os.path.exists(folder_path):
 cap = cv2.VideoCapture(0)
 
 # Load the Haar cascade classifier for face detection
-face_cascade = cv2.CascadeClassifier('C:/Users/danie/Desktop/NTU/Modules/Year 4 Semester 2/Intelligence System/Assignment/facerecognition-main/facerecognition-main/haarcascade_frontalface_default.xml')
+face_cascade = cv2.CascadeClassifier(
+    'C:/Users/danie/Desktop/NTU/Modules/Year 4 Semester 2/Intelligence System/Assignment/facerecognition-main/facerecognition-main/haarcascade_frontalface_default.xml')
 
 # Define the number of images to capture
 num_images = 1000
@@ -33,23 +34,26 @@ while count < num_images:
 
     # Draw rectangles around detected faces
     for (x, y, w, h) in faces:
-        # Draw a rectangle around the detected face
-        # cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2)
-        # Draw a rectangle around the detected face (with fixed size)
-        fixed_w, fixed_h = 250, 300
-        cv2.rectangle(frame, (x, y), (x+fixed_w, y+fixed_h), (0, 255, 0), 2)
 
-        # Save the face image to the directory with the user's name
+
+        # Crop the region of interest (ROI) of the detected face
+        face_roi = frame[y:y+h, x:x+w]
+
+        # Resize the face ROI to the fixed size
+        fixed_size = (300, 300)
+        resized_face_roi = cv2.resize(face_roi, fixed_size)
+
+        # Save the resized face ROI to the directory with the user's name
         img_name = os.path.join(folder_path, str(count) + '.jpg')
-        cv2.imwrite(img_name, frame[y:y+h, x:x+w])
+        cv2.imwrite(img_name, resized_face_roi)
 
         # Increment the count
         count += 1
         print(count)
 
-    # Display the frame
-    cv2.imshow('frame', frame)
-
+        # Display the resized face ROI in a separate window
+        cv2.imshow('face_roi', resized_face_roi)
+    
     # Exit the program if 'q' is pressed
     if cv2.waitKey(1) == ord('q'):
         break
